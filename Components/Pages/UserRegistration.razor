@@ -1,0 +1,72 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using DevExerciseApp.Models
+@using DevExerciseApp.Components
+
+<PageTitle>User Registration</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Register New User</h4>
+                </div>
+                <div class="card-body p-4">
+                    
+                    @if (_isSuccess)
+                    {
+                        <div class="alert alert-success">
+                            <h5 class="alert-heading">Success!</h5>
+                            <p class="mb-0">User <strong>@_userModel.Name</strong> has been successfully registered.</p>
+                            <hr />
+                            <button class="btn btn-outline-success btn-sm" @onclick="ResetForm">Register Another</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <UserForm Model="@_userModel"
+                                  OnValidSubmit="ProcessUserRegistration"
+                                  IsProcessing="@_isProcessing"
+                                  SubmitButtonText="Register User"
+                                  ShowValidationSummary="true" />
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private UserModel _userModel = new();
+    private bool _isProcessing;
+    private bool _isSuccess;
+
+    private async Task ProcessUserRegistration(UserModel submittedUser)
+    {
+        _isProcessing = true;
+        _isSuccess = false;
+
+        try
+        {
+            // Simulate API call or database save
+            await Task.Delay(1500);
+            
+            // Console log to demonstrate backend handling
+            Console.WriteLine($"Saved User: {submittedUser.Name}, {submittedUser.Email}");
+            
+            _isSuccess = true;
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private void ResetForm()
+    {
+        _userModel = new UserModel();
+        _isSuccess = false;
+    }
+}

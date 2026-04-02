@@ -1,0 +1,77 @@
+﻿@using DevExerciseApp.Models
+
+<EditForm Model="Model" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    
+    @if (ShowValidationSummary)
+    {
+        <div class="alert alert-danger px-4 py-3 mb-4 rounded">
+            <ValidationSummary class="mb-0" />
+        </div>
+    }
+
+    <div class="row g-3">
+        <div class="col-md-12">
+            <label for="name" class="form-label fw-bold">Name</label>
+            <InputText id="name" class="form-control" @bind-Value="Model.Name" disabled="@IsProcessing" placeholder="Jane Doe" />
+            <ValidationMessage For="@(() => Model.Name)" class="text-danger small mt-1" />
+        </div>
+
+        <div class="col-md-12">
+            <label for="address" class="form-label fw-bold">Address</label>
+            <InputText id="address" class="form-control" @bind-Value="Model.Address" disabled="@IsProcessing" placeholder="123 Main St" />
+            <ValidationMessage For="@(() => Model.Address)" class="text-danger small mt-1" />
+        </div>
+
+        <div class="col-md-6">
+            <label for="age" class="form-label fw-bold">Age</label>
+            <InputNumber id="age" class="form-control" @bind-Value="Model.Age" disabled="@IsProcessing" placeholder="30" />
+            <ValidationMessage For="@(() => Model.Age)" class="text-danger small mt-1" />
+        </div>
+
+        <div class="col-md-6">
+            <label for="email" class="form-label fw-bold">Email Address</label>
+            <InputText id="email" type="email" class="form-control" @bind-Value="Model.Email" disabled="@IsProcessing" placeholder="jane@example.com" />
+            <ValidationMessage For="@(() => Model.Email)" class="text-danger small mt-1" />
+        </div>
+
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-primary w-100" disabled="@IsProcessing">
+                @if (IsProcessing)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>Processing...</span>
+                }
+                else
+                {
+                    @SubmitButtonText
+                }
+            </button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public UserModel Model { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<UserModel> OnValidSubmit { get; set; }
+
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Submit";
+
+    [Parameter]
+    public bool IsProcessing { get; set; }
+
+    [Parameter]
+    public bool ShowValidationSummary { get; set; } = false;
+
+    private async Task HandleSubmit()
+    {
+        if (OnValidSubmit.HasDelegate)
+        {
+            await OnValidSubmit.InvokeAsync(Model);
+        }
+    }
+}
